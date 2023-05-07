@@ -7,5 +7,11 @@ ssl._create_default_https_context = ssl._create_unverified_context
 url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 # create a YouTube object
-video = YouTube(url)
-ytStream = video.streams
+yt = YouTube(url)
+# print(yt.vid_info)
+# show streams
+for stream in yt.streams:
+    print(stream)
+
+video = yt.streams.get_highest_resolution()
+video.download('yt_download.mp4')

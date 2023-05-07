@@ -17,10 +17,12 @@ def startDownload():
         # video.download()
     # else:
         # print('Could not find high resolution video to download')
+# This portion was written from ChatGPT and pytube reference when I thought the program wasn't working
+# Turns out pytube was incorrectly installed, see https://github.com/pytube/pytube/issues/743 for details
     url = link.get()
-    video = YouTube(url)
-    stream = streams.get_highest_resolution()
-    stream.download()
+    yt = YouTube(url)
+    yt.streams.get_highest_resolution().download()
+    print("Downloading...")
 
 
 
