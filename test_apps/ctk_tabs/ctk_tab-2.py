@@ -1,6 +1,30 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+from pytube import YouTube
+import ssl
 
+ssl._create_default_https_context = ssl._create_unverified_context
+
+global fourkHDR
+global HD
+global SD
+global LQ
+global aHQ
+global aLQ
+
+url = "https://www.youtube.com/watch?v=TpdapO9QGRo&t"
+yt = YouTube(url)
+
+print("HQ Adaptive Streams")
+hq_adapt_streams = yt.streams.filter(progressive=False).order_by('resolution').desc()
+print(hq_adapt_streams)
+print("+\n" + "**************************************************" + "\n" + "all streams")
+avail_streams = yt.streams.order_by('resolution').desc()
+print(avail_streams)
+
+#    CustomApp.dropdown1['values'] = ["4K"]
+#    CustomApp.dropdown1.pack()
+#    fourkHDR = yt.streams.get_by_itag(337)
 
 class CustomApp(ttk.Frame):
     def __init__(self, master=None):
