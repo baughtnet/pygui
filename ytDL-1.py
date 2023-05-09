@@ -19,10 +19,13 @@ def getInfo():
     response = urllib.request.urlopen(image_url)
     image_data = response.read()
     image = Image.open(BytesIO(image_data))
-    image = image.resize((320, 180), Image.LANCZOS)
+    image = image.resize((640, 360), Image.LANCZOS)
     yt_image = ImageTk.PhotoImage(image)
+    # Lines for customtkinter, couldn't get it to work...
+    # vid_canvas.delete("all")
+    # vid_canvas.create_photo(0, 0, anchor='nw', image=yt_image)
+    # vid_canvas.image = yt_image
     vid_image.configure(image=yt_image)
-    link.delete(0, 'end')
 
 # This portion was written from ChatGPT and pytube reference when I thought the program wasn't working
 # Turns out pytube was incorrectly installed, see https://github.com/pytube/pytube/issues/743 for details
@@ -32,12 +35,13 @@ def getInfo():
 def startDownload():
     try:
         # url = link.get()
-        # yt = YouTube(url, on_progress_callback=on_progress)
+        yt = YouTube(url, on_progress_callback=on_progress)
         video = yt.streams.get_highest_resolution()
         title.configure(text=yt.title, text_color="white")
         finishLabel.configure(text="")
         video.download()
         finishLabel.configure(text="Download Complete!", text_color="black")
+        link.delete(0, 'end')
     except:
         finishLabel.configure(text="Invalid Link", text_color="red")
 
@@ -58,7 +62,7 @@ customtkinter.set_default_color_theme("blue")
 
 # app window
 app = customtkinter.CTk()
-app.geometry("720x480")
+app.geometry("720x720")
 app.title("Youtube Downloader")
 
 # ui elements
@@ -67,6 +71,8 @@ title.pack()
 
 vid_image = customtkinter.CTkLabel(app, width=640, height=360, text="")
 vid_image.pack()
+# vid_canvas = customtkinter.CTkCanvas(app, width=640, height=360)
+# vid_canvas.pack()
 
 url_title = customtkinter.CTkLabel(app, text="Paste URL to video:")
 url_title.pack()
@@ -79,6 +85,9 @@ link.pack()
 finishLabel = customtkinter.CTkLabel(app, text="")
 finishLabel.pack()
 
+info_button = customtkinter.CTkButton(app, text="Get Info", command=getInfo)
+info_button.pack(padx=10, pady=10)
+
 pPercent = customtkinter.CTkLabel(app, text="0%")
 pPercent.pack()
 
@@ -86,11 +95,8 @@ progressBar = customtkinter.CTkProgressBar(app, width=400)
 progressBar.set(0)
 progressBar.pack(padx=10, pady=10)
 
-info_button = customtkinter.CTkButton(app, text="Get Info", command=getInfo)
-info_button.pack(padx=10, pady=10)
-
 download = customtkinter.CTkButton(app, text="Download", command=startDownload)
-download.pack(padx=10, pady=10)
+download.pack(padx=5, pady=5)
 
 quitApp = customtkinter.CTkButton(app, text="Quit", command=app.destroy)
 quitApp.pack()
