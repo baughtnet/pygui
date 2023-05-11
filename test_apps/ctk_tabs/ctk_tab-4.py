@@ -2,6 +2,8 @@ import tkinter as tk
 import ssl
 from pytube import YouTube
 import customtkinter
+import os
+import subprocess
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -21,13 +23,27 @@ def download_video():
     down_res = dropdown1.get()
     print(down_res)
     itag = itag_dict.get(down_res)
-    # itag = int(check_itag)
     print(itag)
     if not itag:
         print("Invalid Resolution")
-    yt = YouTube(url)
-    video = yt.streams.get_by_itag(itag)
-    video.download()
+    if itag in ["136", "137", "271", "313"]:
+        yt = YouTube(url)
+        print(itag)
+        video = yt.streams.get_by_itag(itag)
+        video_file = video.download(filename=yt.title + "_video")
+        audio = yt.streams.get_by_itag(251)
+        audio_file = audio.download(filename=yt.title + "_audio")
+        video_filename = os.path.splitext(video_file)[0]
+        merged_filename = video_filename+"_"+audio.abr+".mp4"
+        subprocess.run(['ffmpeg', '-y', '-i', video_file, '-i', audio_file, '-c:v', 'libx264', '-c:a', 'aac', '-strict', '-2', merged_filename])
+        os.remove(audio_file)
+        os.remove(video_file)
+    else:
+        print("Downloading " + itag)
+        yt = YouTube(url)
+        video = yt.streams.get_by_itag(itag)
+        video.download()
+        print("Download Complete!")
 
 
 url = "https://www.youtube.com/watch?v=TpdapO9QGRo&t"
